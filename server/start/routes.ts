@@ -1,17 +1,14 @@
 import Route from '@ioc:Adonis/Core/Route'
+import AuthRequest from 'App/Validators/AuthRequest';
 
 Route.get('/', async () => {
-  return { hello: 'world' }
+    return { hello: 'world' }
 })
 
-Route.post('login', async ({ auth, request, response }) => {
-  const email = request.input('email')
-  const password = request.input('password')
+Route.post('login', 'AuthController.login')
+    .validate(AuthRequest);
 
-  try {
-    const token = await auth.use('api').attempt(email, password)
-    return token
-  } catch {
-    return response.unauthorized('Invalid credentials')
-  }
-})
+Route.group(() => {
+    Route.get('dashboard', 'HomeController.dashboard');
+}).middleware('auth')
+
