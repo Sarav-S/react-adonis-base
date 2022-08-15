@@ -1,19 +1,41 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
+import { Provider } from 'react-redux'
 
 import './index.css';
-import Home from './Pages/Home';
-import Login from './Pages/Login';
+import { store } from './store'
+import Home from './components/Pages/Home';
+import Login from './components/Pages/Login';
+import Dashboard from './components/Pages/Dashboard';
+
+import GuestRoute from './components/GuestRoute';
+import PrivateRoute from './components/PrivateRoute';
+import Header from './components/Header';
 
 function App() {
     return (
-        <div className="App">
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-            </Routes>
-        </div>
+        <Provider store={store}>
+            <div className="App">
+                <Header />
+                <SegregatedRoutes />
+            </div>
+        </Provider>
     );
+}
+
+function SegregatedRoutes () {
+    return <>
+        <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route element={<GuestRoute redirectPath="/dashboard" />}>
+                <Route path="/login" element={<Login />} />
+            </Route>
+            <Route element={<PrivateRoute redirectPath="/login" />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+        </Routes>
+    </>
 }
 
 export default App;

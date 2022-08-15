@@ -21,7 +21,12 @@ export default class AppProvider {
 
                 const errors = that.validate(ctx, rules, customMessages);
                 if (Object.keys(errors).length) {
-                    return ctx.response.notAcceptable(errors);
+                    const validationErrors = {};
+                    for (let key in errors.errors) {
+                        validationErrors[key] = errors.errors[key].pop();
+                    }
+
+                    return ctx.response.notAcceptable({ errors: validationErrors });
                 }
 
                 await next();
